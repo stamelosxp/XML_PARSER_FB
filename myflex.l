@@ -8,7 +8,7 @@
 
 digit    [0-9]
 number   {digit}+
-newline \n+
+newline \n
 
 %%
 {newline} { return EOL; }

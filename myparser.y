@@ -116,7 +116,7 @@ rel_layout
 
 opt_rev_attr
 : relative
-| ID {printf("%s", yytext);} str_cont_nocoms relative
+| nline ID {printf("%s", yytext);} str_cont_nocoms relative
 ;
 
 relative
@@ -130,15 +130,14 @@ textview
 ;
 
 text_attr
-: nline TEXT {printf("%s", yytext);} str_cont_nocoms opt_text_attr
-| nline opt_text_attr 
+: TEXT {printf("%s", yytext);} str_cont_nocoms EMPTYELEMENTEND {printf("%s", yytext);}
+| opt_text_attr 
 ;
 
 opt_text_attr
-: EMPTYELEMENTEND {printf("%s", yytext);} 
-| ID {printf("%s", yytext);} str_cont_nocoms {checkUniqueID(yytext);} opt_text_attr
-| TEXTCOLOR {printf("%s", yytext);} str_cont_nocoms opt_text_attr
-| text_attr
+: nline ID {printf("%s", yytext);} str_cont_nocoms {checkUniqueID(yytext);} opt_text_attr
+| nline TEXTCOLOR {printf("%s", yytext);} str_cont_nocoms opt_text_attr
+| nline text_attr
 ;
 
 //--Image View
@@ -147,15 +146,14 @@ imageview
 ;
 
 img_attr
-: nline SRC {printf("%s", yytext);} str_cont_nocoms opt_img_attr
-| nline opt_img_attr
+: SRC {printf("%s", yytext);} str_cont_nocoms EMPTYELEMENTEND {printf("%s", yytext);} 
+| opt_img_attr
 ; 
 
 opt_img_attr
-: EMPTYELEMENTEND {printf("%s", yytext);} 
-| ID {printf("%s", yytext);} str_cont_nocoms {checkUniqueID(yytext);} opt_img_attr
+: ID {printf("%s", yytext);} str_cont_nocoms {checkUniqueID(yytext);} opt_img_attr
 | PADDING {printf("%s", yytext);} int_cont_nocoms {checkPaddingValue(yytext);} opt_img_attr
-| img_attr
+| nline img_attr
 ;
 
 
@@ -165,15 +163,14 @@ button
 ;
 
 but_attr
-: nline TEXT {printf("%s", yytext);} str_cont_nocoms opt_but_attr
-| nline opt_but_attr
+: TEXT {printf("%s", yytext);} str_cont_nocoms EMPTYELEMENTEND {printf("%s", yytext);} 
+| opt_but_attr
 ;
 
-opt_but_attr
-: EMPTYELEMENTEND {printf("%s", yytext);} 
-| ID {printf("%s", yytext);} str_cont_nocoms {checkUniqueID(yytext);} opt_but_attr
+opt_but_attr 
+: ID {printf("%s", yytext);} str_cont_nocoms {checkUniqueID(yytext);} opt_but_attr
 | PADDING {printf("%s", yytext);} int_cont_nocoms {checkPaddingValue(yytext);} opt_but_attr
-| but_attr
+| nline but_attr
 ;
 
 //--Radio Group
@@ -187,15 +184,14 @@ radiogroupelements
 ;
 
 rad_group_attr
-: nline COUNTER {printf("%s", yytext);} int_cont_nocoms {counterValue = toInteger(yytext);} opt_rgroup_attr
-| nline opt_rgroup_attr
+: COUNTER {printf("%s", yytext);} int_cont_nocoms {counterValue = toInteger(yytext);} TAGEND {printf("%s", yytext);} 
+| opt_rgroup_attr
 ;
 
 opt_rgroup_attr
-: TAGEND {printf("%s", yytext);} 
-| ID {printf("%s", yytext);} str_cont_nocoms {checkUniqueID(yytext);} opt_rgroup_attr
+: ID {printf("%s", yytext);} str_cont_nocoms {checkUniqueID(yytext);} opt_rgroup_attr
 | CHECKEDBUTTON {existCheckButton=1;printf("%s", yytext);} str_cont_nocoms {strcpy(checkButtonValue, yytext);} opt_rgroup_attr
-| rad_group_attr
+| nline rad_group_attr
 ;
 
 //--Radio Button
@@ -204,14 +200,13 @@ radiobutton
 ;
 
 rbut_attr
-: nline TEXT {printf("%s", yytext);} str_cont_nocoms opt_radbut_attr
-| nline opt_radbut_attr
+: TEXT {printf("%s", yytext);} str_cont_nocoms EMPTYELEMENTEND {printf("%s", yytext);} 
+| opt_radbut_attr
 ;
 
 opt_radbut_attr
-: EMPTYELEMENTEND {printf("%s", yytext);} 
-| ID {printf("%s", yytext);} str_cont_nocoms {checkUniqueID(yytext); insertRbuttonValues(yytext);} opt_radbut_attr
-| rbut_attr
+: ID {printf("%s", yytext);} str_cont_nocoms {checkUniqueID(yytext); insertRbuttonValues(yytext);} opt_radbut_attr
+| nline rbut_attr
 ;
 
 //--Progress Bar
@@ -333,14 +328,14 @@ void checkUniqueID(char *idstr){
 
 void checkPaddingValue(char *padstr){
     int value = toInteger(padstr);
-    if(value<=0){
+    if(value==0){
         yyerror("The padding attribute must have a value greater than 0.\n");
         exit(1);
     }
 }
 
 void checkProgressValue(int prog, int maxvalue){
-    if(prog<0 | prog>maxvalue){
+    if(prog>maxvalue){
         yyerror("The progress attribute must be between 0 and the maximum value attribute.\n");
         exit(1);
     }

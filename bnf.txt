@@ -1,0 +1,61 @@
+<Root> ::= <LinearLayout> | <RelativeLayout> 
+
+<GeneralAttributes> ::= "android:layout_width=" <AttrCont> "android:layout_height=" <AttrCont>
+<AttrCont> ::= <String> | <PositiveInteger>
+
+<General> ::= <Root> | <TextView> | <ImageView> | <Button> | <RadioGroup> | <ProgressBar>
+<GeneralCont> ::= <General> <GeneralCont> | <Comments> <GeneralCont> | /*Nothing*/
+
+<LinearLayout> ::= "<LinearLayout" <LinearLayoutAttributes> ">" <General> <GeneralCont> "</LinearLayout>"
+<LinearLayoutAttributes> ::= <GeneralAttributes> <OptionalLinearAttributes>
+<OptionalLinearAttributes> ::= /*empty*/
+| "android:orientation=" <String> <OptionalLinearAttributes>  
+| "android:id=" <String> <OptionalLinearAttributes>
+
+<RelativeLayout> ::= "<RelativeLayout" <RelativeLayoutAttributes> RelativeEnd
+<RelativeEnd> ::= ">" <General> <GeneralCont> "</RelativeLayout>" | "/>"
+<RelativeLayoutAttributes> ::= <GeneralAttributes> <OptionalRelativeLayoutAttributes>
+<OptionalRelativeLayoutAttributes> ::= "android:id=" <String> | /*empty*/
+
+
+<TextView> ::= "<TextView" <TextViewAttributes> "/>"
+<TextViewAttributes> ::= <GeneralAttributes> <OptionalTextViewAttributes> "android:text=" <String>
+<OptionalTextViewAttributes> ::= /*empty*/
+| "android:id=" <String> <OptionalTextViewAttributes>
+| "android:textColor=" <String> <OptionalTextViewAttributes>
+
+
+<ImageView> ::= "<ImageView" <ImageViewAttributes> "/>" 
+<ImageViewAttributes> ::= <GeneralAttributes> <OptionalImageViewAttributes> "android:src=" <String> 
+<OptionalImageViewAttributes> ::= /*empty*/
+| "android:id=" <String> <OptionalImageViewAttributes>
+| "android:padding=" <PositiveInteger> <OptionalImageViewAttributes>
+
+<Button> ::= "<Button" <ButtonAttributes> "/>" 
+<ButtonAttributes> ::= <GeneralAttributes> <OptionalImageViewAttributes> "android:text=" <String> 
+
+
+<RadioGroup> ::= "<RadioGroup" <RadioGroupAttributes> ">" <RadioButton> <Comments1> "</RadioGroup>"
+<RadioGroupCont> ::= <RadioButton> <RadioGroupCont> | <Comments> <RadioGroupCont> | /*empty*/
+<RadioGroupAttributes> ::= <GeneralAttributes> <OptionalRadioGroupAttributes>
+<OptionalRadioGroupAttributes> ::= /*empty*/
+| "android:id=" <String> <OptionalRadioGroupAttributes>
+| "android:checkedButton=" <OptionalRadioGroupAttributes>
+
+<RadioButton> ::= "<RadioButton" <RadioButtonAttributes> "/>"
+<RadioButtonAttributes> ::= <GeneralAttributes> <OptionalRadioButtonAttributes> "android:text=" <String> 
+<OptionalRadioButtonAttributes> ::= "android:id=" <String> | /*empty*/
+
+
+<ProgressBar> ::= "<ProgressBar" <ProgressBarAttributes> "/>"
+<ProgressBarAttributes> ::= <GeneralAttributes> <OptionalProgressBarAttributes> 
+<OptionalProgressBarAttributes> ::= /*empty*/
+| "android:id=" <String> <OptionalProgressBarAttributes>
+| "android:max=" <PositiveInteger> <OptionalProgressBarAttributes>
+| "android:progress=" <PositiveInteger> <OptionalProgressBarAttributes>
+
+<Comments> ::= "<!--" <CommentsContent> "-->"  
+<CommentContent> ::= /*Ola ektos apo --*/
+<PositiveInteger> ::= "[0-9]+"   
+<String> ::= "^\\" 
+
